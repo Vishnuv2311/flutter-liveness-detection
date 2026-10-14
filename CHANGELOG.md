@@ -1,3 +1,10 @@
+# 1.3.0 🚀
+
+## Features
+- 🎨 **`LivenessDetectionTheme`**: optional `theme` in `LivenessDetectionConfig` to match the host app's design — background colour, custom back button widget, text colour, status/step text styles and localizable face found / not found texts. Without a theme the screen looks exactly as before.
+
+---
+
 # 1.2.1 🚀
 
 ## Improvements

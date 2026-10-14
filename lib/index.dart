@@ -10,6 +10,7 @@ export 'package:flutter_liveness_detection_plugin/src/models/liveness_detection_
 export 'package:flutter_liveness_detection_plugin/src/models/liveness_detection_config.dart';
 export 'package:flutter_liveness_detection_plugin/src/models/liveness_detection_threshold.dart';
 export 'package:flutter_liveness_detection_plugin/src/models/liveness_detection_cooldown.dart';
+export 'package:flutter_liveness_detection_plugin/src/models/liveness_detection_theme.dart';
 export 'package:flutter_liveness_detection_plugin/src/core/services/liveness_cooldown_service.dart';
 export 'package:flutter_liveness_detection_plugin/src/presentation/widgets/liveness_cooldown_widget.dart';
 

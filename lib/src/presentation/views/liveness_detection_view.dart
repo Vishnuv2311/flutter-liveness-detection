@@ -503,10 +503,14 @@ class _LivenessDetectionScreenState extends State<LivenessDetectionView> {
     return _shuffledSteps;
   }
 
+  Color get _backgroundColor =>
+      widget.config.theme?.backgroundColor ??
+      (widget.config.isDarkMode ? Colors.black : Colors.white);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: widget.config.isDarkMode ? Colors.black : Colors.white,
+      backgroundColor: _backgroundColor,
       body: _buildBody(),
     );
   }
@@ -539,13 +543,14 @@ class _LivenessDetectionScreenState extends State<LivenessDetectionView> {
         Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-          color: widget.config.isDarkMode ? Colors.black : Colors.white,
+          color: _backgroundColor,
         ),
         LivenessDetectionStepOverlayWidget(
           cameraController: _cameraController,
           duration: widget.config.durationLivenessVerify,
           showDurationUiText: widget.config.showDurationUiText,
           isDarkMode: widget.config.isDarkMode,
+          theme: widget.config.theme,
           isFaceDetected: _faceDetectedState,
           camera: CameraPreview(_cameraController!),
           key: _stepsKey,

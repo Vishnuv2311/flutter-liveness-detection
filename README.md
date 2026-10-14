@@ -89,6 +89,27 @@ final String? response = await FlutterLivenessDetectionPlugin.instance.livenessD
 - `useCustomizedLabel`: Enable custom challenge labels (default: false)
 - `customizedLabel`: Custom labels — empty string `''` skips challenge, `null` uses default
 
+### Theming
+- `theme`: Optional `LivenessDetectionTheme` to match your app's design (default: null — uses `isDarkMode` colours)
+  - `backgroundColor`: Screen background colour
+  - `backButton`: Widget shown instead of the 'Back' text (tapping it pops the screen)
+  - `textColor`: Colour of the default texts
+  - `statusTextStyle`: Style of the face found / not found status text
+  - `stepTextStyle`: Style of the current challenge text
+  - `faceFoundText` / `faceNotFoundText`: Override the status texts (e.g. for localization)
+
+```dart
+LivenessDetectionConfig(
+  theme: LivenessDetectionTheme(
+    backgroundColor: const Color(0xFF3C3C3C),
+    backButton: const Icon(Icons.arrow_back, color: Colors.white),
+    textColor: Colors.white,
+    stepTextStyle: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+    faceNotFoundText: 'Align your face in the circle',
+  ),
+)
+```
+
 ### Security Features
 - `enableCooldownOnFailure`: Enable cooldown after failed attempts (default: true)
 - `maxFailedAttempts`: Number of failures before cooldown (default: 3)

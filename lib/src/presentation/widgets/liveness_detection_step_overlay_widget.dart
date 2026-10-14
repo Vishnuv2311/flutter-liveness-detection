@@ -11,6 +11,7 @@ class LivenessDetectionStepOverlayWidget extends StatefulWidget {
   final bool isFaceDetected;
   final bool showCurrentStep;
   final bool isDarkMode;
+  final LivenessDetectionTheme? theme;
   final bool showDurationUiText;
   final int? duration;
 
@@ -23,6 +24,7 @@ class LivenessDetectionStepOverlayWidget extends StatefulWidget {
     required this.isFaceDetected,
     this.showCurrentStep = false,
     this.isDarkMode = true,
+    this.theme,
     this.showDurationUiText = false,
     this.duration,
   });
@@ -54,6 +56,18 @@ class LivenessDetectionStepOverlayWidgetState
   }
 
   String get stepCounter => "$_currentIndex/${widget.steps.length}";
+
+  Color get _textColor =>
+      widget.theme?.textColor ??
+      (widget.isDarkMode ? Colors.white : Colors.black);
+
+  Color get _backgroundColor =>
+      widget.theme?.backgroundColor ??
+      (widget.isDarkMode ? Colors.black : Colors.white);
+
+  Widget get _backButton =>
+      widget.theme?.backButton ??
+      Text('Back', style: TextStyle(color: _textColor));
 
   @override
   void initState() {
@@ -200,39 +214,25 @@ class LivenessDetectionStepOverlayWidgetState
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          'Back',
-                          style: TextStyle(
-                              color: widget.isDarkMode
-                                  ? Colors.white
-                                  : Colors.black),
-                        ),
+                        _backButton,
                         Visibility(
                           replacement: const SizedBox.shrink(),
                           visible: widget.showDurationUiText,
                           child: Text(
                             _getRemainingTimeText(_remainingDuration),
                             style: TextStyle(
-                              color: widget.isDarkMode
-                                  ? Colors.white
-                                  : Colors.black,
+                              color: _textColor,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
                         Text(
                           stepCounter,
-                          style: TextStyle(
-                              color: widget.isDarkMode
-                                  ? Colors.white
-                                  : Colors.black),
+                          style: TextStyle(color: _textColor),
                         )
                       ],
                     )
-                  : Text('Back',
-                      style: TextStyle(
-                          color:
-                              widget.isDarkMode ? Colors.white : Colors.black)),
+                  : _backButton,
             ),
             _buildBody(),
           ],
@@ -294,7 +294,7 @@ class LivenessDetectionStepOverlayWidgetState
                 )
               : ColorFiltered(
                   colorFilter: ColorFilter.mode(
-                      widget.isFaceDetected ? Colors.green : Colors.black,
+                      widget.isFaceDetected ? Colors.green : _textColor,
                       BlendMode.modulate),
                   child: LottieBuilder.asset(
                     widget.isFaceDetected
@@ -306,9 +306,10 @@ class LivenessDetectionStepOverlayWidgetState
         ),
         const SizedBox(width: 16),
         Text(
-          widget.isFaceDetected ? 'User Face Found' : 'User Face Not Found...',
-          style:
-              TextStyle(color: widget.isDarkMode ? Colors.white : Colors.black),
+          widget.isFaceDetected
+              ? (widget.theme?.faceFoundText ?? 'User Face Found')
+              : (widget.theme?.faceNotFoundText ?? 'User Face Not Found...'),
+          style: widget.theme?.statusTextStyle ?? TextStyle(color: _textColor),
         ),
       ],
     );
@@ -334,7 +335,7 @@ class LivenessDetectionStepOverlayWidgetState
       padding: const EdgeInsets.all(10),
       child: Container(
         decoration: BoxDecoration(
-          color: widget.isDarkMode ? Colors.black : Colors.white,
+          color: _backgroundColor,
           borderRadius: BorderRadius.circular(20),
         ),
         alignment: Alignment.center,
@@ -343,11 +344,12 @@ class LivenessDetectionStepOverlayWidgetState
         child: Text(
           widget.steps[index].title,
           textAlign: TextAlign.center,
-          style: TextStyle(
-            color: widget.isDarkMode ? Colors.white : Colors.black,
-            fontSize: 24,
-            fontWeight: FontWeight.w500,
-          ),
+          style: widget.theme?.stepTextStyle ??
+              TextStyle(
+                color: _textColor,
+                fontSize: 24,
+                fontWeight: FontWeight.w500,
+              ),
         ),
       ),
     );
