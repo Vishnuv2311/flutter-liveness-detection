@@ -28,6 +28,13 @@ class _LivenessDetectionScreenState extends State<LivenessDetectionView> {
   bool _isTakingPicture = false;
   Timer? _timerToDetectFace;
 
+  // Completion state. Navigator, ScaffoldMessenger and route are cached so
+  // completion never looks them up through a context that may be deactivated.
+  bool _isCompleted = false;
+  NavigatorState? _navigator;
+  ScaffoldMessengerState? _scaffoldMessenger;
+  ModalRoute<dynamic>? _route;
+
   // Detection state variables
   late bool _isInfoStepCompleted;
   bool _isProcessingStep = false;
@@ -207,9 +214,32 @@ class _LivenessDetectionScreenState extends State<LivenessDetectionView> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _navigator = Navigator.maybeOf(context);
+    _scaffoldMessenger = ScaffoldMessenger.maybeOf(context);
+    _route = ModalRoute.of(context);
+  }
+
+  @override
+  void activate() {
+    super.activate();
+    // Restore the timeout cancelled in deactivate() if the widget is reinserted.
+    if (_cameraController != null && !_isCompleted) {
+      _startFaceDetectionTimer();
+    }
+  }
+
+  @override
+  void deactivate() {
+    _cancelFaceDetectionTimer();
+    super.deactivate();
+  }
+
+  @override
   void dispose() {
-    _timerToDetectFace?.cancel();
-    _timerToDetectFace = null;
+    _isCompleted = true;
+    _cancelFaceDetectionTimer();
     _cameraController?.dispose();
     
     if (widget.config.isEnableMaxBrightness) {
@@ -258,6 +288,17 @@ class _LivenessDetectionScreenState extends State<LivenessDetectionView> {
   }
 
   void _startLiveFeed() async {
+    if (!mounted || _isCompleted) return;
+
+    // Release the previous controller (e.g. on a retry after a failed capture)
+    // before opening the camera again.
+    final oldController = _cameraController;
+    if (oldController != null) {
+      setState(() => _cameraController = null);
+      await oldController.dispose();
+      if (!mounted || _isCompleted) return;
+    }
+
     final camera = availableCams[_cameraIndex];
     _cameraController = CameraController(
       camera,
@@ -277,10 +318,16 @@ class _LivenessDetectionScreenState extends State<LivenessDetectionView> {
   }
 
   void _startFaceDetectionTimer() {
+    _cancelFaceDetectionTimer();
     _timerToDetectFace = Timer(
       Duration(seconds: widget.config.durationLivenessVerify ?? 45),
       () => _onDetectionCompleted(imgToReturn: null),
     );
+  }
+
+  void _cancelFaceDetectionTimer() {
+    _timerToDetectFace?.cancel();
+    _timerToDetectFace = null;
   }
 
   Future<void> _processCameraImage(CameraImage cameraImage) async {
@@ -428,6 +475,10 @@ class _LivenessDetectionScreenState extends State<LivenessDetectionView> {
   }
 
   void _onDetectionCompleted({XFile? imgToReturn}) async {
+    if (_isCompleted) return;
+    _isCompleted = true;
+    _cancelFaceDetectionTimer();
+
     final String? imgPath = imgToReturn?.path;
 
     if (imgPath != null) {
@@ -444,11 +495,12 @@ class _LivenessDetectionScreenState extends State<LivenessDetectionView> {
               : 'Verification of liveness detection success!',
         ),
       );
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      _scaffoldMessenger?.showSnackBar(snackBar);
     }
-    if (!mounted) return;
-    Navigator.of(context).pop(imgPath);
+    // Only pop if this screen is still the top route; otherwise pop() would
+    // close whichever screen is now on top.
+    if (!mounted || _route?.isCurrent == false) return;
+    _navigator?.pop(imgPath);
   }
 
   void _resetSteps() {
