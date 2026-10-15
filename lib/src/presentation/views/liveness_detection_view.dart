@@ -28,11 +28,10 @@ class _LivenessDetectionScreenState extends State<LivenessDetectionView> {
   bool _isTakingPicture = false;
   Timer? _timerToDetectFace;
 
-  // Completion state. Navigator, ScaffoldMessenger and route are cached so
-  // completion never looks them up through a context that may be deactivated.
+  // Completion state. Navigator and route are cached so completion never
+  // looks them up through a context that may be deactivated.
   bool _isCompleted = false;
   NavigatorState? _navigator;
-  ScaffoldMessengerState? _scaffoldMessenger;
   ModalRoute<dynamic>? _route;
 
   // Detection state variables
@@ -217,7 +216,6 @@ class _LivenessDetectionScreenState extends State<LivenessDetectionView> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _navigator = Navigator.maybeOf(context);
-    _scaffoldMessenger = ScaffoldMessenger.maybeOf(context);
     _route = ModalRoute.of(context);
   }
 
@@ -486,16 +484,6 @@ class _LivenessDetectionScreenState extends State<LivenessDetectionView> {
       final int fileSizeInBytes = await imageFile.length();
       final double sizeInKb = fileSizeInBytes / 1024;
       debugPrint('Image result size : ${sizeInKb.toStringAsFixed(2)} KB');
-    }
-    if (widget.config.isEnableSnackBar) {
-      final snackBar = SnackBar(
-        content: Text(
-          imgToReturn == null
-              ? 'Verification of liveness detection failed, please try again. (Exceeds time limit ${widget.config.durationLivenessVerify ?? 45} second.)'
-              : 'Verification of liveness detection success!',
-        ),
-      );
-      _scaffoldMessenger?.showSnackBar(snackBar);
     }
     // Only pop if this screen is still the top route; otherwise pop() would
     // close whichever screen is now on top.

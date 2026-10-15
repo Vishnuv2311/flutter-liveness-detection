@@ -69,11 +69,21 @@ class _HomeViewState extends State<HomeView> {
                 final String? response =
                     await FlutterLivenessDetectionPlugin.instance
                         .livenessDetection(context: context, config: config);
-                if (mounted) {
-                  setState(() {
-                    imgPath = response;
-                  });
-                }
+                if (!context.mounted) return;
+                // The plugin shows no SnackBar; the app decides how to
+                // report the result.
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      response == null
+                          ? 'Liveness detection failed, please try again.'
+                          : 'Liveness detection success!',
+                    ),
+                  ),
+                );
+                setState(() {
+                  imgPath = response;
+                });
               },
               label: const Text('Start Liveness Detection'),
             ),
@@ -127,7 +137,6 @@ class _HomeViewState extends State<HomeView> {
           startWithInfoScreen: true,
           useCustomizedLabel: false,
           enableCooldownOnFailure: false,
-          isEnableSnackBar: true,
           shuffleListWithSmileLast: true,
           isDarkMode: false,
           showCurrentStep: true,
@@ -142,7 +151,6 @@ class _HomeViewState extends State<HomeView> {
           startWithInfoScreen: false,
           useCustomizedLabel: false,
           enableCooldownOnFailure: false,
-          isEnableSnackBar: true,
           shuffleListWithSmileLast: false,
           isDarkMode: false,
           showCurrentStep: true,
@@ -157,7 +165,6 @@ class _HomeViewState extends State<HomeView> {
           startWithInfoScreen: false,
           useCustomizedLabel: false,
           enableCooldownOnFailure: false,
-          isEnableSnackBar: true,
           shuffleListWithSmileLast: true,
           isDarkMode: true,
           showCurrentStep: true,
@@ -172,7 +179,6 @@ class _HomeViewState extends State<HomeView> {
           startWithInfoScreen: true,
           useCustomizedLabel: true,
           enableCooldownOnFailure: false,
-          isEnableSnackBar: true,
           shuffleListWithSmileLast: true,
           isDarkMode: false,
           showCurrentStep: true,
@@ -195,7 +201,6 @@ class _HomeViewState extends State<HomeView> {
           startWithInfoScreen: false,
           useCustomizedLabel: true,
           enableCooldownOnFailure: false,
-          isEnableSnackBar: true,
           shuffleListWithSmileLast: false,
           isDarkMode: false,
           showCurrentStep: true,
@@ -220,7 +225,6 @@ class _HomeViewState extends State<HomeView> {
           enableCooldownOnFailure: true,
           maxFailedAttempts: 2,
           cooldownMinutes: 5,
-          isEnableSnackBar: true,
           shuffleListWithSmileLast: true,
           isDarkMode: false,
           showCurrentStep: true,
@@ -235,7 +239,6 @@ class _HomeViewState extends State<HomeView> {
           startWithInfoScreen: false,
           useCustomizedLabel: false,
           enableCooldownOnFailure: false,
-          isEnableSnackBar: false,
           shuffleListWithSmileLast: false,
           isDarkMode: false,
           showCurrentStep: false,
@@ -252,7 +255,6 @@ class _HomeViewState extends State<HomeView> {
           enableCooldownOnFailure: true,
           maxFailedAttempts: 3,
           cooldownMinutes: 10,
-          isEnableSnackBar: true,
           shuffleListWithSmileLast: true,
           isDarkMode: true,
           showCurrentStep: true,

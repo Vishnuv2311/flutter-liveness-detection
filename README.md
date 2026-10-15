@@ -49,7 +49,6 @@ final String? response = await FlutterLivenessDetectionPlugin.instance.livenessD
     startWithInfoScreen: true,
     isDarkMode: false,
     showCurrentStep: true,
-    isEnableSnackBar: true,
     shuffleListWithSmileLast: true,
     useCustomizedLabel: false,
     customizedLabel: LivenessDetectionLabelModel(
@@ -82,7 +81,6 @@ final String? response = await FlutterLivenessDetectionPlugin.instance.livenessD
 ### UI Settings
 - `isDarkMode`: Dark theme mode (default: true)
 - `showCurrentStep`: Show current step number (default: false)
-- `isEnableSnackBar`: Show success/failure notifications (default: true)
 - `shuffleListWithSmileLast`: Randomize challenges with smile at end (default: true)
 
 ### Customization
@@ -134,7 +132,6 @@ class MyApp extends StatelessWidget {
                   startWithInfoScreen: true,
                   isDarkMode: false,
                   showCurrentStep: true,
-                  isEnableSnackBar: true,
                 ),
               );
 

@@ -1,3 +1,13 @@
+# Unreleased
+
+## Fixes
+- 🐛 **Crash after the liveness screen closes**: leftover timeout timers could fire after a successful capture or back press, causing "Looking up a deactivated widget's ancestor is unsafe" and possibly popping the host app's screen. Timers are now cancelled properly, completion runs only once, and the camera controller is released before retrying.
+
+## Changes
+- 🗑️ **SnackBar removed**: the plugin no longer shows a SnackBar on success or failure. `isEnableSnackBar` is deprecated and ignored — show your own message from the result of `livenessDetection()` (`null` means failure).
+
+---
+
 # 1.3.0 🚀
 
 ## Features

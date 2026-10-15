@@ -14,6 +14,10 @@ class LivenessDetectionConfig {
   final bool enableCooldownOnFailure;
   final int maxFailedAttempts;
   final int cooldownMinutes;
+  @Deprecated(
+    'No longer used. The plugin does not show a SnackBar; show one from your '
+    'app based on the result of livenessDetection().',
+  )
   final bool isEnableSnackBar;
   final bool shuffleListWithSmileLast;
   final bool showCurrentStep;
@@ -32,7 +36,11 @@ class LivenessDetectionConfig {
     this.enableCooldownOnFailure = true,
     this.maxFailedAttempts = 3,
     this.cooldownMinutes = 10,
-    this.isEnableSnackBar = true,
+    @Deprecated(
+      'No longer used. The plugin does not show a SnackBar; show one from your '
+      'app based on the result of livenessDetection().',
+    )
+    this.isEnableSnackBar = false,
     this.shuffleListWithSmileLast = true,
     this.showCurrentStep = false,
     this.isDarkMode = true,
